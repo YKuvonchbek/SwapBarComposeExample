@@ -5,7 +5,7 @@ on:
 
 jobs:
   connected-tests:
-    runs-on: macos-13
+    runs-on: ubuntu-latest  # Use Ubuntu for more stable emulator performance
 
     steps:
       - name: Checkout
@@ -21,39 +21,47 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v2
         with:
-          api-level: 30
-          build-tools: 30.0.3
+          api-level: 29  # Try using API 29 for stability
+          build-tools: 29.0.3
 
       - name: Start Emulator
         uses: ReactiveCircus/android-emulator-runner@v2
         with:
-          api-level: 30
-          target: google_apis
+          api-level: 29  # Using API level 29 for better compatibility
+          target: default  # Change to 'default' target for more stability
           arch: x86_64
           profile: Nexus 6
           emulator-options: '-no-window -no-audio'  # Save resources on CI machine
           script: ./gradlew connectedCheck  # Gradle task to run
 
-      - name: Wait for Emulator to Go Online
+      - name: Restart ADB (Ensure ADB is responsive)
+        run: |
+          adb kill-server
+          adb start-server
+
+      - name: Wait for Emulator to Boot
         run: |
           boot_completed=""
-          timeout=300  # Timeout in seconds (5 minutes)
+          timeout=600  # Increase timeout to 10 minutes
           elapsed=0
-          while [ -z "$boot_completed" ] && [ $elapsed -lt $timeout ]; do
+          while [ "$boot_completed" != "1" ] && [ $elapsed -lt $timeout ]; do
             boot_completed=$(adb shell getprop sys.boot_completed | tr -d '\r')
             if [ "$boot_completed" = "1" ]; then
               echo "Emulator booted!"
             else
-              echo "Waiting for emulator to boot..."
-              sleep 10
-              elapsed=$((elapsed + 10))
+              echo "Waiting for emulator to boot... elapsed=$elapsed seconds"
             fi
+            sleep 10
+            elapsed=$((elapsed + 10))
           done
 
-          if [ -z "$boot_completed" ]; then
+          if [ "$boot_completed" != "1" ]; then
             echo "Emulator failed to boot in $timeout seconds."
             exit 1
           fi
+
+      - name: Check ADB Devices
+        run: adb devices  # Check the status of connected devices
 
       - name: Grant execute permission for Gradlew
         run: chmod +x ./gradlew
