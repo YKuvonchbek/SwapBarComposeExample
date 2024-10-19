@@ -1,0 +1,14 @@
+name: On Pull Request
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: Linting
+    uses: ./.github/workflows/lint.yml
+
+  instrumentation:
+    name: Instrumentation Testing
+    uses: ./.github/workflows/instrumentation_test.yml

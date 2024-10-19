@@ -1,11 +1,11 @@
-name: Instrumentation Test
+name: Lint
 
 on:
   workflow_call:
 
 jobs:
   lint:
-    name: Instrumentation Testing
+    name: Linting
     runs-on: ubuntu-latest
 
     steps:
@@ -22,5 +22,5 @@ jobs:
       - name: Grant execute permission
         run: chmod +x gradlew
 
-      - name: Execute Gradle Command - ./gradlew connectedAndroidTest
-        run: ./gradlew connectedAndroidTest
+      - name: Execute Gradle Command - lint
+        run: ./gradlew lint
