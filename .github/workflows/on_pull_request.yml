@@ -12,8 +12,3 @@ jobs:
   instrumentation:
     name: Instrumentation Testing
     uses: ./.github/workflows/instrumentation_test.yml
-
-  assemble:
-    name: Building debug APK
-    needs: [lint, instrumentation]
-    uses: ./.github/workflows/assemble_build.yml
