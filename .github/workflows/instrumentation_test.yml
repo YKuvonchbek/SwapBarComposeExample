@@ -31,33 +31,27 @@ jobs:
           target: google_apis
           arch: x86_64
           profile: Nexus 6
-          emulator-options: '-no-window -no-audio -verbose'
-
-      - name: Restart ADB (in case it's unresponsive)
-        run: |
-          adb kill-server
-          adb start-server
+          emulator-options: '-no-window -no-audio'  # Save resources on CI machine
+          script: ./gradlew connectedCheck  # Gradle task to run
 
       - name: Wait for Emulator to Go Online
         run: |
-          device_status=""
+          boot_completed=""
           timeout=300  # Timeout in seconds (5 minutes)
           elapsed=0
-          while [ "$device_status" != "device" ] && [ $elapsed -lt $timeout ]; do
-            device_status=$(adb get-state | tr -d '\r')
-            if [ "$device_status" = "device" ]; then
-              echo "Emulator is online!"
-            elif [ "$device_status" = "offline" ]; then
-              echo "Emulator is offline, waiting..."
+          while [ -z "$boot_completed" ] && [ $elapsed -lt $timeout ]; do
+            boot_completed=$(adb shell getprop sys.boot_completed | tr -d '\r')
+            if [ "$boot_completed" = "1" ]; then
+              echo "Emulator booted!"
             else
-              echo "Waiting for emulator to come online..."
+              echo "Waiting for emulator to boot..."
+              sleep 10
+              elapsed=$((elapsed + 10))
             fi
-            sleep 10
-            elapsed=$((elapsed + 10))
           done
 
-          if [ "$device_status" != "device" ]; then
-            echo "Emulator failed to come online within $timeout seconds."
+          if [ -z "$boot_completed" ]; then
+            echo "Emulator failed to boot in $timeout seconds."
             exit 1
           fi
 
