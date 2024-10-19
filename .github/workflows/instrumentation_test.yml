@@ -32,20 +32,7 @@ jobs:
           arch: x86_64
           profile: Nexus 6
           emulator-options: '-no-window -no-audio'
-
-      - name: Wait for emulator to boot
-        run: |
-          adb wait-for-device
-          boot_completed=""
-          while [ -z "$boot_completed" ]; do
-            boot_completed=$(adb shell getprop sys.boot_completed | tr -d '\r')
-            if [ "$boot_completed" = "1" ]; then
-              echo "Emulator booted!"
-            else
-              echo "Waiting for emulator to boot..."
-              sleep 10
-            fi
-          done
+          script: ./gradlew connectedCheck
 
       - name: Grant execute permission for Gradlew
         run: chmod +x ./gradlew
