@@ -1,7 +1,8 @@
 name: Assemble APK
 
 on:
-  workflow_call:
+  push:
+    branches: [main]
 
 jobs:
   lint:
