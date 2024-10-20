@@ -1,6 +1,6 @@
 # Jetpack Compose Swap View
 
-![Demo MP4](https://github.com/YKuvonchbek/SwapBarComposeExample/blob/main/demo.mp4)
+![Demo GIF](https://github.com/YKuvonchbek/SwapBarComposeExample/blob/main/demo.gif)
 
 A customizable Jetpack Compose animation swap view, similar to the Google Translate language swap bar. This view provides a smooth animated rotation and icon swap effect for any content, perfect for toggling between two states.
 
