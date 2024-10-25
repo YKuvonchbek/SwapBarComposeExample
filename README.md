@@ -11,7 +11,7 @@ A customizable Jetpack Compose animation swap view, similar to the Google Transl
    enum class LanguageType(override var displayName: String): Displayable {
        ENGLISH("English"), UZBEK("Uzbek");
    }
-2. Configure the view
+2. Configure the view (Modifiers, Button background...)
    ```kotlin
    SwapBarComposeView(
     options = LanguageType.entries.toList(),
